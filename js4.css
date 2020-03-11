@@ -1,0 +1,43 @@
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse; 
+  margin-left: 10px;
+}
+th, td {
+  padding: 15px;
+  text-align: left;  }
+
+input {
+  background-color:white;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+table th {
+	padding: 5px;
+}
+table td{
+	padding: 5px;
+	text-align: center;
+}
+
+.btn {
+	margin: 10px;
+}
+.buttons {
+	margin-left: 35%;
+}
+.total {
+	margin-left: 60%;
+}
+.total h4 , .total p {
+	display: inline;
+	vertical-align: top;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    line-height: 28px;  
+}

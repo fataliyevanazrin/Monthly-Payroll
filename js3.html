@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="js4.css">
+    <style>
+        table, th, td 
+        {
+            font: 17px Calibri;
+            border: solid 1px #DDD;
+            border-collapse: collapse;
+            padding: 2px 3px;
+            text-align: center;
+            margin-top: 10px ;
+           
+        }
+        th {
+            font-weight:bold;
+        }
+        .add {
+            margin-left: 25%;
+        }
+        .salary, .bonus {
+          width: 47px;
+        }
+        .emp {
+          width: 90px;
+        }
+    </style>
+</head>
+<body onload="savefunc()">
+    <button onclick = "CreateTable()" class="btn btn-primary add">
+      Add dep
+    </button>
+
+<script type="text/javascript">
+ var d = new Date();
+var getTot = daysInMonth(d.getMonth(),d.getFullYear()); //Get total days in a month
+var weekdays = new Array();  
+var m = d.getMonth();
+var m1 = m + 1 
+
+for(var i=1;i<=getTot;i++){    //looping through days in month
+    var newDate = new Date(d.getFullYear(),d.getMonth(),i)
+    if (newDate.getDay()==1 || newDate.getDay()==2 || newDate.getDay()==3 || newDate.getDay()==4 || newDate.getDay()==5)
+    {   
+        weekdays.push(i + ".0" + m1);
+    }
+    
+
+}
+
+
+function daysInMonth(month,year) {
+    return new Date(year, month, 0).getDate();
+} 
+  function CreateTable() {
+         var dep_id = localStorage.getItem('dep_id')
+   
+    var add_button = document.createElement('button');
+    var del_button = document.createElement('button');
+    var cal_button = document.createElement('button');
+     // SET INPUT ATTRIBUTE 'type' AND 'value'.
+        add_button.setAttribute('type', 'button');
+        add_button.setAttribute('class', 'btn btn-primary add');
+        del_button.setAttribute('class', 'btn btn-primary');
+        del_button.setAttribute('type', 'button');
+        cal_button.setAttribute('type', 'button');
+        cal_button.setAttribute('class', 'btn btn-primary');
+
+        // ADD THE BUTTON's 'onclick' EVENT.
+       
+      
+        add_button.innerHTML = "Add Row"
+        del_button.innerHTML = "Delete Row"
+        cal_button.innerHTML = "Calculate"
+      dep_id++;
+        localStorage.setItem("dep_id" , dep_id);
+        var table = document.createElement('table');
+        table.setAttribute('id', 'datatables' + dep_id);
+         var arrHead = new Array();
+        arrHead = ['Salary', 'Bonus', 'Work Days', 'Paydeck'];
+
+         var tr = table.insertRow(-1);
+         var th = document.createElement('th');   
+       th.innerHTML = "Name of Employee";
+            tr.appendChild(th);
+        for (var h = 0; h < weekdays.length; h++) {
+            var th = document.createElement('th');              // TABLE HEADER.
+            th.innerHTML = weekdays[h];
+            tr.appendChild(th);
+        }
+        for (var h = 0; h < arrHead.length; h++) {
+            var th = document.createElement('th');              // TABLE HEADER.
+            th.innerHTML = arrHead[h];
+            tr.appendChild(th);
+        }
+        
+         
+        del_button.setAttribute('id', 'delete-row'+dep_id);
+        del_button.setAttribute('value', dep_id);
+        add_button.setAttribute('id', 'addrow'+ dep_id);
+        add_button.setAttribute('value', dep_id);
+        cal_button.setAttribute('value', dep_id);
+        cal_button.setAttribute('id' , 'calculate'+dep_id)
+        
+           
+      
+        document.body.appendChild(table);
+        document.body.appendChild(add_button);
+        document.body.appendChild(del_button);
+        document.body.appendChild(cal_button);
+  
+   // var pbuttons2 = ''
+   var p1 = new Array();
+   var g = localStorage.getItem('dep_id')
+        $("#addrow"+g).click(function(){
+         // console.log(s);
+         // g = this.value;
+          var pbuttons2 = ''
+           var counter = localStorage.getItem("counter"+g);
+           counter++;
+           localStorage.setItem("counter"+g , counter);
+           
+          p1= [];
+           var days = weekdays.length;
+             for (var i = 1; i <= days; i++) {
+           var counter = localStorage.getItem("counter"+g);
+            
+            var name = "<input type='text' class='emp' value='Employee"+counter+"' id = 'dep"+g+"employee"+counter+"'  onchange='function1()'>";
+            var d1 ="<input type='button' class='dep"+g+"attendance"+counter+" att' value='P' onchange='function1()' id='dep"+g+"myButton"+counter+"_"+i+"'>";
+            p1.push(d1);
+       }  
+   
+            var Salary = "<input type='number' class='salary' name='Salary' onchange='function1()' value='1000' id='dep"+g+"s"+counter+"'>"
+            var Bonus =  "<input type='number' class='bonus' name='Bonus' onchange='function1()' value='200' id='dep"+g+"b"+counter+"'>"
+            var WD = "<th class='wd' id='dep"+g+"wd"+counter+"'></th>"
+            var Paydeck = "<th class='paydeck' id='dep"+g+"pd"+counter+"'></th>"
+            
+             for (var i = 0; i < p1.length; i++) {
+             var pbuttons = p1[i] + "</td><td>"
+
+             pbuttons2= pbuttons2 + pbuttons 
+            
+              }
+             var markup = "<tr id='row"+counter+"' class = 'trow'><td>" + name + "</td><td>" +pbuttons2  + Salary + "</td><td>" + Bonus  + WD + Paydeck + "</td></tr>";
+                
+            $("#datatables"+g).append(markup);
+              function1();
+             for (var n = 1; n <= counter; n++) {
+            for (var m = 1; m <= weekdays.length; m++) {
+   localStorage.setItem("dep" + g + "att" + n + "." + m , $("#dep" + g + "myButton" + n + "_" + m).val());
+              
+            }
+          }
+              $(".dep"+g+"attendance"+counter).click(function() {
+             days = weekdays.length;
+
+       
+        if ( this.value == "P") {
+        this.value = 'A';
+        }
+    else {
+         this.value = 'P'; }
+         for (var n = 1; n <= counter; n++) {
+            for (var m = 1; m <= weekdays.length; m++) {
+   localStorage.setItem("dep" + g + "att" + n + "." + m , $("#dep" + g + "myButton" + n + "_" + m).val());
+              
+            }
+          }
+     
+     
+ })
+          }) 
+          $("#delete-row"+g).click(function(){
+       // dep_id = this.value;
+      var a = localStorage.getItem("counter"+dep_id);
+      var b = localStorage.getItem("counter"+dep_id);
+      a -- ;
+      if (a<0) {
+        a = 0
+        localStorage.setItem("counter"+dep_id , a);
+      }
+     localStorage.setItem("counter"+dep_id , a);
+   document.getElementById("datatables"+dep_id).deleteRow(b);
+    for (var m = 1; m <= weekdays.length; m++) {
+   localStorage.removeItem("dep" + dep_id + "att" + b + "." + m );
+              
+            }
+   localStorage.removeItem("dep" + dep_id + "empl" + b);
+   localStorage.removeItem("dep" + dep_id + "sal" + b);
+   localStorage.removeItem("dep" + dep_id + "bon" + b);
+   
+   });  
+
+        $('#calculate'+g).click(function(){
+  //var total1 = 0;
+  var h = weekdays.length;
+    depid = this.value;
+
+var counter = localStorage.getItem("counter"+g);
+ for (var n = 1; n <= counter; n++) {
+ var i1 = 0;
+  for (var m = 1; m<=weekdays.length; m++) {
+ 
+  
+  
+  var x1 = document.getElementById("dep"+g+"myButton"+n + "_" + m).value;
+  
+
+  if ( x1 == "P")
+  {
+    i1++;
+  }
+
+  console.log(i1);
+}
+document.getElementById("dep" + depid + "wd" + n).innerHTML = i1;
+var s1 = document.getElementById("dep" + depid + "s" + n).value;
+var b1 = document.getElementById("dep" + depid + "b" + n).value;
+var d1 = i1 * s1 / h ;
+var p1 = +d1 + +b1;
+document.getElementById("dep" + depid + "pd" + n).innerHTML = p1;
+ localStorage.setItem("dep" + depid + "wd" +n , i1);
+localStorage.setItem("dep" + depid + "pd" +n , p1); 
+}
+})  
+      }
+$(document).ready(function(){
+    var a = localStorage.getItem('dep_id')
+    for (var dep = 1; dep <= a; dep++) {
+
+        $('#addrow'+dep).click(function(){
+          g = this.value;
+           var pbuttons2 = " ";
+           var p1 = [];
+           var days = weekdays.length;
+          var counter = localStorage.getItem("counter"+g);
+           counter++;
+          localStorage.setItem("counter"+g , counter);
+            var name = "<input type='text' class='emp' value='Employee"+counter+"' id = 'dep"+g+"employee"+counter+"'  onchange='function1()'>";
+             for (var i = 1; i <= days; i++) {
+               
+            var d1 ="<input type='button' class='dep"+g+"attendance"+counter+" att' value='P' onchange='function1()' id='dep"+g+"myButton"+counter+"_"+i+" '>";
+            p1.push(d1); 
+  // localStorage.setItem("dep" + g + "att" + counter + "." + i, $("#dep" + g + "myButton" + counter + "_" + i).val());
+          
+
+          }
+           var Salary = "<input type='number' class='salary' name='Salary' onchange='function1()' value='1000' id='dep"+g+"s"+counter+"'>"
+            var Bonus =  "<input type='number' class='bonus' name='Bonus' onchange='function1()' value='200' id='dep"+g+"b"+counter+"'>"
+            var WD = "<th class='wd' id='dep"+g+"wd"+counter+"'></th>"
+            var Paydeck = "<th class='paydeck' id='dep"+g+"pd"+counter+"'></th>"
+            for (var i = 0; i < p1.length; i++) {
+             var pbuttons = p1[i] + "</td><td>"
+
+             pbuttons2= pbuttons2 + pbuttons 
+            var markup = "<tr id='dep"+g+"row"+counter+"' class = 'trow'><td>" + name + "</td><td>" + pbuttons2 + Salary + "</td><td>" + Bonus  + WD + Paydeck + "</td></tr>";
+                 }
+    
+            $("#datatables"+g).append(markup); 
+ 
+            function1();
+
+            for (var n = 1; n <= counter; n++) {
+            for (var m = 1; m <= weekdays.length; m++) {
+   localStorage.setItem("dep" + g + "att" + n + "." + m , $("#dep" + g + "myButton" + n + "_" + m).val());
+              }
+          }
+
+           $(".dep"+g+"attendance"+counter).click(function() {
+        if ( this.value == "P") {
+        this.value = 'A';
+        }
+    else {
+         this.value = 'P'; }
+         for (var n = 1; n <= counter; n++) {
+            for (var m = 1; m <= weekdays.length; m++) {
+   localStorage.setItem("dep" + g + "att" + n + "." + m , $("#dep" + g + "myButton" + n + "_" + m).val());
+              
+            } } 
+     })
+ })
+
+             $("#delete-row"+dep).click(function(){
+        dep_id = this.value;
+      var a = localStorage.getItem("counter"+dep_id);
+      var b = localStorage.getItem("counter"+dep_id);
+      a -- ;
+       if (a<0) {
+        a = 0
+        localStorage.setItem("counter"+dep_id , a);
+      }
+     localStorage.setItem("counter"+dep_id , a);
+   document.getElementById("datatables"+dep_id).deleteRow(b);
+   localStorage.removeItem("dep" + dep_id + "empl" + b);
+   localStorage.removeItem("dep" + dep_id + "sal" + b);
+   localStorage.removeItem("dep" + dep_id + "bon" + b);
+   for (var m = 1; m<=weekdays.length; m++) { 
+   localStorage.removeItem("dep" + dep_id + "att"+ b + "." + m);
+   }
+    });
+    
+     $('#calculate'+dep).click(function(){
+      alert("ds");
+    depid = this.value; 
+    var counter = localStorage.getItem("counter"+depid);
+ for (var n = 1; n <= counter; n++) {
+ var i1 = 0;
+  for (var m = 1; m<=weekdays.length; m++) { 
+  var x1 = document.getElementById("dep"+depid+"myButton"+n + "_" + m).value;
+  if ( x1 == "P")
+  {
+    i1++;
+  }
+console.log(i1);
+}
+document.getElementById("dep" + depid + "wd" + n).innerHTML = i1;
+var s1 = document.getElementById("dep" + depid + "s" + n).value;
+var b1 = document.getElementById("dep" + depid + "b" + n).value;
+var d1 = i1 * s1 / h ;
+var p1 = +d1 + +b1;
+document.getElementById("dep" + depid + "pd" + n).innerHTML = p1;
+localStorage.setItem("dep" + depid + "wd" +n , i1);
+localStorage.setItem("dep" + depid + "pd" +n , p1);  
+}
+})  
+          
+          }
+          })
+
+
+function savefunc() {
+  var m2 = localStorage.getItem("dep_id");
+       for (var g = 1; g <= m2; g++) {
+            
+         var table = document.createElement('table');
+        table.setAttribute('id', 'datatables' + g);
+
+        var arrHead = new Array();
+        arrHead = ['Salary', 'Bonus', 'Work Days', 'Paydeck'];
+
+         var tr = table.insertRow(-1);
+         var th = document.createElement('th');   
+       th.innerHTML = "Name of Employee";
+            tr.appendChild(th);
+        for (var h = 0; h < weekdays.length; h++) {
+            var th = document.createElement('th');              // TABLE HEADER.
+            th.innerHTML = weekdays[h];
+            tr.appendChild(th);
+        }
+        for (var h = 0; h < arrHead.length; h++) {
+            var th = document.createElement('th');              // TABLE HEADER.
+            th.innerHTML = arrHead[h];
+            tr.appendChild(th);
+        }
+
+      
+        var add_button = document.createElement('button');
+        var del_button = document.createElement('button');
+        var cal_button = document.createElement('button');
+        add_button.setAttribute('type', 'button');
+        add_button.setAttribute('class', 'btn btn-primary add');
+        del_button.setAttribute('class', 'btn btn-primary');
+        del_button.setAttribute('type', 'button');
+        cal_button.setAttribute('type', 'button');
+        cal_button.setAttribute('class', 'btn btn-primary');
+         
+        del_button.setAttribute('id', 'delete-row'+g);
+        del_button.setAttribute('value', g);
+        add_button.setAttribute('id', 'addrow'+g);
+        add_button.setAttribute('value', g);
+        cal_button.setAttribute('value', g);
+        cal_button.setAttribute('id' , 'calculate'+g)
+        
+          
+
+        add_button.innerHTML = "Add Row"
+        del_button.innerHTML = "Delete Row"
+        cal_button.innerHTML = "Calculate"
+
+        document.body.appendChild(table);
+        document.body.appendChild(add_button);
+        document.body.appendChild(del_button);
+        document.body.appendChild(cal_button);
+
+   
+       var c = localStorage.getItem("counter" + g)
+     
+
+  for (var k = 1; k <= c; k++) {
+     var p1 = [];
+     var pbuttons2 = " "
+     var days = weekdays.length;
+     var name = "<input type='text' class='emp' value='Employee"+k+"' id = 'dep"+g+"employee"+k+"'  onchange='function1()'>";
+      for (var n = 1; n <= days; n++) {
+
+            var d1 ="<input type='button' class='dep"+g+"attendance"+k+" att' value='P' onchange='function1()' id='dep"+g+"myButton"+k+"_"+n+" '>";
+            p1.push(d1); 
+            // localStorage.setItem("dep" + g + "att" + k + "." + n, $("#dep" + g + "myButton" + k + "_" + n).val());
+       
+          // document.getElementById("dep" + g + "myButton"+ k + "_" + n).value = localStorage.getItem("dep" + g + "att" + k + "." + n);
+
+          }
+            
+      var Salary = "<input type='number' class='salary' name='Salary' onchange='function1()' value='1000' id='dep"+g+"s"+k+"'>"
+      var Bonus =  "<input type='number' class='bonus' name='Bonus' onchange='function1()' value='200' id='dep"+g+"b"+k+"'>"
+      var WD = "<th class='wd' id='dep"+g+"wd"+k+"'></th>"
+      var Paydeck = "<th class='paydeck' id='dep"+g+"pd"+k+"'></th>"
+      for (var i = 0; i < p1.length; i++) {
+           var pbuttons = p1[i] + "</td><td>"
+
+             pbuttons2= pbuttons2 + pbuttons 
+            var markup = "<tr id='dep"+g+"row"+k+"' class = 'trow'><td>" + name + "</td><td>" + pbuttons2 + Salary + "</td><td>" + Bonus  + WD + Paydeck + "</td></tr>";
+           
+            
+            }
+            $("#datatables" + g).append(markup);
+
+             $(".dep"+g+"attendance"+k).click(function() {
+             var days = weekdays.length;
+        if ( this.value == "P") {
+        this.value = 'A';
+        }
+    else {
+         this.value = 'P'; }
+         for (var n1 = 1; n1 <= c; n1++) {
+            for (var m1 = 1; m1 <= weekdays.length; m1++) {
+   localStorage.setItem("dep" + g + "att" + n1 + "." + m1 , $("#dep" + g + "myButton" + n1 + "_" + m1).val());
+              
+            } } 
+     })
+
+}
+ // document.getElementById("dep1myButton1_1").value =  localStorage.getItem("dep1att1.1" );
+      
+       var c1 = localStorage.getItem("counter" + g)
+
+ for (var n5 = 1; n5 <= c1; n5++) {
+
+  console.log(n5)
+ 
+  var days = weekdays.length
+
+ document.getElementById("dep" + g + "employee" + n5).value =  localStorage.getItem("dep" + g + "empl" + n5);
+ document.getElementById("dep" + g + "s" + n5).value =  localStorage.getItem("dep" + g + "sal" + n5);
+ document.getElementById("dep" + g + "b" + n5).value =  localStorage.getItem("dep" + g + "bon" + n5);
+ document.getElementById("dep" + g + "wd" + n5).innerHTML =  localStorage.getItem("dep" + g + "wd" + n5);
+ document.getElementById("dep" + g + "pd" + n5).innerHTML =  localStorage.getItem("dep" + g + "pd" + n5);
+  for (var m3 = 1; m3 <= days; m3++) {
+    
+     console.log("dep" + g + "myButton"+ n5 + "_" + m3)
+  document.getElementById("dep" + g + "myButton"+ n5 + "_" + m3).value =  localStorage.getItem("dep" + g + "att" + n5 + "." + m3);
+}
+ }
+}
+}
+function function1() {
+  var n=localStorage.getItem("dep_id")
+    for (var g = 1; g <= n; g++) {
+       var counter = localStorage.getItem("counter" + g)
+     //  localStorage.setItem('dep_name'+g, $("#dep_name"+g).val());
+       for (var i = 1; i <= counter; i++) {
+    localStorage.setItem("dep" + g + "empl" + i , $("#dep" + g + "employee" + i).val());
+    localStorage.setItem("dep" + g + "sal" + i , $("#dep" + g + "s" + i).val());
+    localStorage.setItem("dep" + g + "bon" + i , $("#dep" + g + "b" + i).val());
+        }
+ }
+}
+</script>
+</body>
+</html>
