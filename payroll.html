@@ -36,9 +36,16 @@
     </button>
 
 <script type="text/javascript">
+  function sorter(a, b) {
+  if (a < b) return -1;  // any negative number works
+  if (a > b) return 1;   // any positive number works
+  return 0; // equal values MUST yield zero
+}
+
  var d = new Date();
  //Get total days in a month
-var weekdays = new Array();  
+var weekdays = new Array(); 
+var weekend = new Array(); 
 var month = d.getMonth() + 1;
 var m1 = month
 var year = d.getFullYear()
@@ -49,10 +56,13 @@ for(var i=1;i<=getTot;i++){    //looping through days in month
     {   
         weekdays.push(i);
     }
-    
+  else 
+  weekend.push(i);    
 
 }
-
+var all_month = weekdays.concat(weekend);
+all_month.sort(sorter);
+console.log(all_month)
 
 function daysInMonth(month,year) {
     return new Date(year, month, 0).getDate();
@@ -93,9 +103,9 @@ function daysInMonth(month,year) {
          var th = document.createElement('th');   
        th.innerHTML = "Name of Employee";
             tr.appendChild(th);
-        for (var h = 0; h < weekdays.length; h++) {
+        for (var h = 0; h < all_month.length; h++) {
             var th = document.createElement('th');              // TABLE HEADER.
-            th.innerHTML = weekdays[h];
+            th.innerHTML = all_month[h];
             tr.appendChild(th);
         }
         for (var h = 0; h < arrHead.length; h++) {
@@ -131,33 +141,59 @@ function daysInMonth(month,year) {
          function1();
         
    // var pbuttons2 = ''
-   var p1 = new Array();
+   var attendance1 = new Array();
    var g = localStorage.getItem('dep_id')
         $("#addrow"+g).click(function(){
          // console.log(s);
          // g = this.value;
           var pbuttons2 = ''
-           var counter = localStorage.getItem("counter"+g);
-           counter++;
-           localStorage.setItem("counter"+g , counter);
+          var counter = localStorage.getItem("counter"+g);
+          counter++;
+          localStorage.setItem("counter"+g , counter);
            
-          p1= [];
-           var days = weekdays.length;
-             for (var i = 1; i <= days; i++) {
-           var counter = localStorage.getItem("counter"+g);
+          attendance1= [];
+
+
+    var counter = localStorage.getItem("counter"+g);
+    var d = new Date();
+    var month = d.getMonth() + 1;
+    var year = d.getFullYear()
+    var days = daysInMonth(month, year);
+    var weekdays_ = weekdays.length;
+    var day_counter = 0;
+    var attendance_ = [];
+    var name = "<input type='text' class='emp' value='Employee"+counter+"' id = 'dep"+g+"employee"+counter+"'  onchange='function1()'>";
+      for (var i = 1; i <= days; i++) {
+          for (var n = 1; n <= weekdays_; n++) {
             
-            var name = "<input type='text' class='emp' value='Employee"+counter+"' id = 'dep"+g+"employee"+counter+"'  onchange='function1()'>";
-            var d1 ="<input type='button' class='dep"+g+"attendance"+counter+" att' value='P' onchange='function1()' id='dep"+g+"myButton"+counter+"_"+i+"'>";
-            p1.push(d1);
-       }  
-   
+           
+         var attendance = "<input type='button' class='dep"+g+"attendance"+counter+" att' value='P' id = 'dep"+g+"myButton"+counter+"_"+n+"'  onchange='function1()'>";
+        
+             attendance_.push(attendance);
+   localStorage.setItem("dep" + g + "att" + counter + "." + n, "P");
+             
+             }
+        var newDate = new Date(d.getFullYear(),d.getMonth(),i)
+           
+         var weekend_ = "W"
+         if ( newDate.getDay()==0 || newDate.getDay()==6) {
+             attendance1.push(weekend_);
+          }
+          else {
+            
+             attendance1.push(attendance_[day_counter]);
+             day_counter++;
+             
+           }
+         }
+
             var Salary = "<input type='number' class='salary' name='Salary' onchange='function1()' value='1000' id='dep"+g+"s"+counter+"'>"
             var Bonus =  "<input type='number' class='bonus' name='Bonus' onchange='function1()' value='200' id='dep"+g+"b"+counter+"'>"
             var WD = "<th class='wd' id='dep"+g+"wd"+counter+"'></th>"
             var Paydeck = "<th class='paydeck' id='dep"+g+"pd"+counter+"'></th>"
             
-             for (var i = 0; i < p1.length; i++) {
-             var pbuttons = p1[i] + "</td><td>"
+             for (var i = 0; i < attendance1.length; i++) {
+             var pbuttons = attendance1[i] + "</td><td>"
 
              pbuttons2= pbuttons2 + pbuttons 
             
@@ -287,19 +323,41 @@ $(document).ready(function(){
         $('#addrow'+dep).click(function(){
           g = this.value;
           var attendance1 = [];
+          var attendance_ = [];
           var attendance2 = " "
-           var days = weekdays.length;
           var counter = localStorage.getItem("counter"+g);
            counter++;
           localStorage.setItem("counter"+g , counter);
-            var name = "<input type='text' class='emp' value='Employee"+counter+"' id = 'dep"+g+"employee"+counter+"'  onchange='function1()'>";
-             for (var n = 1; n <= days; n++) {
+           var d = new Date();
+     var month = d.getMonth() + 1;
+     var year = d.getFullYear()
+    var days = daysInMonth(month, year);
+     var weekdays_ = weekdays.length;
+     var day_counter = 0;
+      var name = "<input type='text' class='emp' value='Employee"+counter+"' id = 'dep"+g+"employee"+counter+"'  onchange='function1()'>";
+      for (var i = 1; i <= days; i++) {
+          for (var n = 1; n <= weekdays_; n++) {
+            
+           
          var attendance = "<input type='button' class='dep"+g+"attendance"+counter+" att' value='P' id = 'dep"+g+"myButton"+counter+"_"+n+"'  onchange='function1()'>";
-             attendance1.push(attendance);
+        
+             attendance_.push(attendance);
    localStorage.setItem("dep" + g + "att" + counter + "." + n, "P");
-          
 
+             }
+        var newDate = new Date(d.getFullYear(),d.getMonth(),i)
+           
+         var weekend_ = "W"
+         if ( newDate.getDay()==0 || newDate.getDay()==6) {
+             attendance1.push(weekend_);
           }
+          else {
+            
+             attendance1.push(attendance_[day_counter]);
+             day_counter++;
+             
+           }
+         }
            var Salary = "<input type='number' class='salary' name='Salary' onchange='function1()' value='1000' id='dep"+g+"s"+counter+"'>"
             var Bonus =  "<input type='number' class='bonus' name='Bonus' onchange='function1()' value='200' id='dep"+g+"b"+counter+"'>"
             var WD = "<th class='wd' id='dep"+g+"wd"+counter+"'></th>"
@@ -444,9 +502,9 @@ function savefunc() {
          var th = document.createElement('th');   
        th.innerHTML = "Name of Employee";
             tr.appendChild(th);
-        for (var h = 0; h < weekdays.length; h++) {
+        for (var h = 0; h < all_month.length; h++) {
             var th = document.createElement('th');              // TABLE HEADER.
-            th.innerHTML = weekdays[h];
+            th.innerHTML = all_month[h];
             tr.appendChild(th);
         }
         for (var h = 0; h < arrHead.length; h++) {
@@ -499,14 +557,35 @@ function savefunc() {
 
   for (var k = 1; k <= c; k++) {
      var attendance1 = [];
+     var attendance_ = [];
      var attendance2 = " "
-     var days = weekdays.length;
+     var d = new Date();
+     var month = d.getMonth() + 1;
+     var year = d.getFullYear()
+    var days = daysInMonth(month, year);
+     var weekdays_ = weekdays.length;
+     var day_counter = 0;
       var name = "<input type='text' class='emp' value='Employee"+k+"' id = 'dep"+g+"employee"+k+"'  onchange='function1()'>";
-      for (var n = 1; n <= days; n++) {
-         var attendance = "<input type='button' class='dep"+g+"attendance"+k+" att' value='P' id = 'dep"+g+"myButton"+k+"_"+n+"'  onchange='function1()'>";
-             attendance1.push(attendance);
-             
+      for (var i = 1; i <= days; i++) {
+          for (var n = 1; n <= weekdays_; n++) {
+            
            
+         var attendance = "<input type='button' class='dep"+g+"attendance"+k+" att' value='P' id = 'dep"+g+"myButton"+k+"_"+n+"'  onchange='function1()'>";
+        
+             attendance_.push(attendance);
+             }
+        var newDate = new Date(d.getFullYear(),d.getMonth(),i)
+           
+         var weekend_ = "W"
+         if ( newDate.getDay()==0 || newDate.getDay()==6) {
+             attendance1.push(weekend_);
+          }
+          else {
+            
+             attendance1.push(attendance_[day_counter]);
+             day_counter++;
+             
+           }
             // localStorage.setItem("dep" + g + "att" + k + "." + n, $("#dep" + g + "myButton" + k + "_" + n).val());
        
           // document.getElementById("dep" + g + "myButton"+ k + "_" + n).value = localStorage.getItem("dep" + g + "att" + k + "." + n);
